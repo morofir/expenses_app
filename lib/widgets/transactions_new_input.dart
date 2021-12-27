@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class NewTransaction extends StatefulWidget {
   final Function addTx;
@@ -10,21 +11,36 @@ class NewTransaction extends StatefulWidget {
 }
 
 class _NewTransactionState extends State<NewTransaction> {
-  final titleController = TextEditingController();
+  final _titleController = TextEditingController();
+  final _amountController = TextEditingController();
+  DateTime _selectedDate; //not final, changes
 
-  final amountController = TextEditingController();
+  void _submitData() {
+    final enteredtitle = _titleController.text;
 
-  void submitData() {
-    final enteredtitle = titleController.text;
+    final enteredAmount = double.parse(_amountController.text);
 
-    final enteredAmount = double.parse(amountController.text);
-
-    if (enteredtitle.isEmpty || enteredAmount <= 0)
+    if (enteredtitle.isEmpty || enteredAmount <= 0 || _selectedDate == null)
       return; //no input validation
 
-    widget.addTx(enteredtitle, enteredAmount);
+    widget.addTx(enteredtitle, enteredAmount, _selectedDate);
 
     Navigator.of(context).pop(); //return back after adding new transactions
+  }
+
+  void _openDatePicker() {
+    showDatePicker(
+            context: context,
+            firstDate: DateTime(2019),
+            initialDate: DateTime.now(),
+            lastDate: DateTime.now())
+        .then((pickedDate) {
+      if (pickedDate == null) return;
+      setState(() {
+        //in order to render the date picker
+        _selectedDate = pickedDate;
+      });
+    });
   }
 
   @override
@@ -38,8 +54,9 @@ class _NewTransactionState extends State<NewTransaction> {
                 children: <Widget>[
                   TextField(
                       autocorrect: true,
-                      controller: titleController,
-                      onSubmitted: (_) => submitData(), //pass null value method
+                      controller: _titleController,
+                      onSubmitted: (_) =>
+                          _submitData(), //pass null value method
 
                       decoration: InputDecoration(
                         labelText: 'Enter Title',
@@ -47,14 +64,35 @@ class _NewTransactionState extends State<NewTransaction> {
                   TextField(
                     autocorrect: true,
                     keyboardType: TextInputType.number,
-                    controller: amountController,
+                    controller: _amountController,
                     onSubmitted: (_) =>
-                        submitData(), //pass input value method but not using it
+                        _submitData(), //pass input value method but not using it
 
                     decoration: InputDecoration(
                       labelText: 'Enter Amount',
                       prefixIcon: Icon(Icons.attach_money_sharp),
                     ),
+                  ),
+                  Container(
+                    height: 80,
+                    child: Row(children: <Widget>[
+                      Text(
+                        (_selectedDate == null
+                            ? 'No date Chosen'
+                            : 'Picked Date: ${DateFormat.yMMMd().format(_selectedDate)}'),
+                      ),
+                      Container(
+                        margin: EdgeInsets.all(10),
+                        child: ElevatedButton(
+                          child: Text('Choose Date'),
+                          onPressed: _openDatePicker,
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.teal,
+                            padding: EdgeInsets.all(10),
+                          ),
+                        ),
+                      )
+                    ]),
                   ),
                   ElevatedButton(
                       style: ElevatedButton.styleFrom(
@@ -63,7 +101,7 @@ class _NewTransactionState extends State<NewTransaction> {
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           )),
-                      onPressed: submitData, //dont have value from btn
+                      onPressed: _submitData, //dont have value from btn
                       child: Text('Add Transaction'))
                 ])));
   }

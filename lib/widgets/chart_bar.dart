@@ -9,9 +9,12 @@ class ChartBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(children: <Widget>[
-      FittedBox(
-        //for font wont grow
-        child: Text('\$${spendAmount.toStringAsFixed(0)}'),
+      Container(
+        height: 20,
+        child: FittedBox(
+          //for font wont grow
+          child: Text('\$${spendAmount.toStringAsFixed(0)}'),
+        ),
       ),
       SizedBox(height: 4),
       Container(
