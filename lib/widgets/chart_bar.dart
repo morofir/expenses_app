@@ -8,39 +8,45 @@ class ChartBar extends StatelessWidget {
   ChartBar(this.label, this.spendAmount, this.spendAmountPrecent);
   @override
   Widget build(BuildContext context) {
-    return Column(children: <Widget>[
-      Container(
-        height: 20,
-        child: FittedBox(
-          //for font wont grow
-          child: Text('\$${spendAmount.toStringAsFixed(0)}'),
+    final bool isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+    return LayoutBuilder(builder: (ctx, constraint) {
+      // print(constraint); //inifinity
+      //we will get the constraints of the chart bar
+      return Column(children: <Widget>[
+        Container(
+          height: 20,
+          child: FittedBox(
+            //for font wont grow
+            child: Text('\$${spendAmount.toStringAsFixed(0)}'),
+          ),
         ),
-      ),
-      SizedBox(height: 4),
-      Container(
-          height: 60,
-          width: 10,
-          child: Stack(children: <Widget>[
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.grey,
-                  width: 1,
-                ),
-                color: Color.fromRGBO(220, 220, 220, 1),
-                borderRadius: BorderRadius.circular(15),
-              ),
-            ),
-            FractionallySizedBox(
-                heightFactor: spendAmountPrecent, //0-1 value
-                child: Container(
-                    decoration: BoxDecoration(
-                  color: Colors.black,
+        SizedBox(height: 4),
+        Container(
+            height: isLandscape ? 120 : 60,
+            width: 10,
+            child: Stack(children: <Widget>[
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.grey,
+                    width: 1,
+                  ),
+                  color: Color.fromRGBO(220, 220, 220, 1),
                   borderRadius: BorderRadius.circular(15),
-                ))),
-          ])), //stack widget
-      SizedBox(height: 4),
-      Text(label),
-    ]);
+                ),
+              ),
+              FractionallySizedBox(
+                  heightFactor: spendAmountPrecent, //0-1 value
+                  child: Container(
+                      decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(15),
+                  ))),
+            ])), //stack widget
+        SizedBox(height: 4),
+        Text(label),
+      ]);
+    });
   }
 }

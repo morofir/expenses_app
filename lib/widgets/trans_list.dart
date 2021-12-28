@@ -15,7 +15,7 @@ class TransactionList extends StatelessWidget {
       onPressed: () => Navigator.of(context).pop(),
     );
     Widget continueButton = TextButton(
-        child: Text("Delete"),
+        child: Text("DELETE!"),
         onPressed: () => {deleteTransaction(id), Navigator.of(context).pop()});
 
     // set up the AlertDialog
@@ -40,9 +40,14 @@ class TransactionList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
+    final bool isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
 
     return Container(
-      height: height / 1.5,
+      padding: EdgeInsets.all(20),
+      alignment: Alignment.center,
+      height: height * 0.67,
       child: transactions.isEmpty
           ? Column(
               children: [
@@ -54,7 +59,7 @@ class TransactionList extends StatelessWidget {
                   height: 30,
                 ),
                 Container(
-                  height: 300,
+                  height: isLandscape ? 150 : 300,
                   child: Image.asset(
                     'assets/images/waiting2.jpeg',
                     fit: BoxFit.cover,

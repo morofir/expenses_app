@@ -1,10 +1,18 @@
+import 'dart:io';
+
 import 'package:expenses_app/widgets/chart.dart';
 import 'package:expenses_app/widgets/trans_list.dart';
 import 'package:expenses_app/widgets/transactions_new_input.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'model/transaction.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  // WidgetsFlutterBinding.ensureInitialized();
+  // SystemChrome.setPreferredOrientations(
+  //     [DeviceOrientation.portraitUp]); //no landscape mode
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
@@ -53,9 +61,11 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Transaction> get _recentTransactions {
     return _userTransactions.where((tx) {
       return tx.date.isAfter(DateTime.now().subtract(
-          Duration(days: 30))); //from this month only (now minus 30 days)
+          Duration(days: 30))); //from this month only (now minus 7 days)
     }).toList();
   }
+
+  bool _showChart = false;
 
   void _addNewTransaction(
       String txTitle, double txAmount, DateTime chosenDate) {
@@ -81,6 +91,52 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final bool isLandscape = mediaQuery.orientation == Orientation.landscape;
+    final pageBody = Column(
+      mainAxisAlignment: MainAxisAlignment.start, //default value main
+      crossAxisAlignment: CrossAxisAlignment.center, //(right left) secon dary
+      children: <Widget>[
+        isLandscape
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Show Chart ',
+
+                    textScaleFactor: 1.2, //1.2 the default font size
+                  ),
+                  Switch.adaptive(
+                    value: _showChart,
+                    onChanged: (val) {
+                      setState(() {
+                        //trigger the build method
+                        _showChart = val;
+                      });
+                    },
+                  ),
+                ],
+              )
+            : Container(
+                width: double.infinity,
+                child: Card(
+                  color: Colors.white24,
+                  child: Chart(_recentTransactions), //chart
+                  elevation: 5,
+                ),
+              ),
+        _showChart
+            ? Container(
+                width: double.infinity,
+                child: Card(
+                  color: Colors.white24,
+                  child: Chart(_recentTransactions), //chart
+                  elevation: 5,
+                ),
+              )
+            : TransactionList(_userTransactions, _deleteTransaction), //list
+      ],
+    );
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black87, // status bar color
@@ -92,21 +148,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       //need to be here, wont work (or we can do it inside translist with 300 height)
-      body: Column(
-          mainAxisAlignment: MainAxisAlignment.start, //default value main
-          crossAxisAlignment:
-              CrossAxisAlignment.center, //(right left) secondary
-          children: <Widget>[
-            Container(
-              width: double.infinity,
-              child: Card(
-                color: Colors.white24,
-                child: Chart(_recentTransactions),
-                elevation: 5,
-              ),
-            ),
-            TransactionList(_userTransactions, _deleteTransaction),
-          ]),
+      body: pageBody,
       floatingActionButtonLocation: null, //can change default location
       floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.teal,
