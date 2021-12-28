@@ -35,6 +35,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   final List<Transaction> _userTransactions = [
+    //empty at first
     // Transaction(
     //   id: 't1',
     //   title: 'New Shoes',
@@ -52,7 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Transaction> get _recentTransactions {
     return _userTransactions.where((tx) {
       return tx.date.isAfter(DateTime.now().subtract(
-          Duration(days: 7))); //from this week only (now minus 7 days)
+          Duration(days: 30))); //from this month only (now minus 30 days)
     }).toList();
   }
 
@@ -66,6 +67,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
     setState(() {
       _userTransactions.add(newTx);
+    });
+  }
+
+  void _deleteTransaction(String id) {
+    setState(() {
+      // _userTransactions.removeWhere((tx)=>tx.id == id);
+      _userTransactions.removeWhere((tx) {
+        return tx.id == id; //remove by id in the list
+      });
     });
   }
 
@@ -95,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 elevation: 5,
               ),
             ),
-            TransactionList(_userTransactions),
+            TransactionList(_userTransactions, _deleteTransaction),
           ]),
       floatingActionButtonLocation: null, //can change default location
       floatingActionButton: FloatingActionButton(

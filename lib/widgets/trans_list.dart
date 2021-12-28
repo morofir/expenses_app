@@ -4,13 +4,16 @@ import 'package:intl/intl.dart';
 
 class TransactionList extends StatelessWidget {
   final List<Transaction> transactions;
+  final Function deleteTransaction;
 
-  TransactionList(this.transactions);
+  TransactionList(this.transactions, this.deleteTransaction);
 
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
+
     return Container(
-      height: 510,
+      height: height / 1.5,
       child: transactions.isEmpty
           ? Column(
               children: [
@@ -55,36 +58,12 @@ class TransactionList extends StatelessWidget {
                     subtitle: Text(
                         DateFormat.yMMMd().format(transactions[index].date)),
                     trailing: IconButton(
-                        onPressed: () {},
+                        onPressed: () =>
+                            deleteTransaction(transactions[index].id),
                         icon: Icon(Icons.delete),
                         color: Colors.red),
                   ),
                 );
-                // return Card(
-                //   child: Row(children: <Widget>[
-                //     Container(
-                //       margin: EdgeInsets.symmetric(vertical: 5, horizontal: 25),
-                //       decoration: BoxDecoration(
-                //           borderRadius: BorderRadius.circular(12),
-                //           border: Border.all(width: 1, color: Colors.black)),
-                //       padding: EdgeInsets.all(10),
-                //       child: Text(
-                //         '\$${transactions[index].amount.toStringAsFixed(2)}', //$ + text
-                //         style: TextStyle(fontSize: 16, fontFamily: 'Quicksand'),
-                //       ),
-                //     ),
-                //     Column(children: <Widget>[
-                //       Text('${transactions[index].title}',
-                //           style: TextStyle(
-                //               fontWeight: FontWeight.bold,
-                //               fontSize: 21,
-                //               color: Colors.teal)),
-                //       Text(DateFormat.yMMMMd().format(transactions[index].date),
-                //           style: TextStyle(
-                //               fontWeight: FontWeight.w400, color: Colors.grey)),
-                //     ])
-                //   ]),
-                // );
               },
               itemCount: transactions.length, //number of item to render
             ),
