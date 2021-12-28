@@ -8,6 +8,35 @@ class TransactionList extends StatelessWidget {
 
   TransactionList(this.transactions, this.deleteTransaction);
 
+  void showDialogDelete(context, var id) {
+    // set up the buttons
+    Widget cancelButton = TextButton(
+      child: Text("Cancel"),
+      onPressed: () => Navigator.of(context).pop(),
+    );
+    Widget continueButton = TextButton(
+        child: Text("Delete"),
+        onPressed: () => {deleteTransaction(id), Navigator.of(context).pop()});
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Expense Delete"),
+      content: Text("Would you like to delete this expense?"),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
@@ -59,7 +88,8 @@ class TransactionList extends StatelessWidget {
                         DateFormat.yMMMd().format(transactions[index].date)),
                     trailing: IconButton(
                         onPressed: () =>
-                            deleteTransaction(transactions[index].id),
+                            showDialogDelete(ctx, transactions[index].id),
+                        // deleteTransaction(transactions[index].id),
                         icon: Icon(Icons.delete),
                         color: Colors.red),
                   ),
