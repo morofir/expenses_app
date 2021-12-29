@@ -1,16 +1,13 @@
-import 'dart:io';
-
 import 'package:expenses_app/widgets/chart.dart';
 import 'package:expenses_app/widgets/trans_list.dart';
-import 'package:expenses_app/widgets/transactions_new_input.dart';
+import 'package:expenses_app/widgets/new_transaction.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'model/transaction.dart';
 
 void main() {
   // WidgetsFlutterBinding.ensureInitialized();
   // SystemChrome.setPreferredOrientations(
-  //     [DeviceOrientation.portraitUp]); //no landscape mode
+  // [DeviceOrientation.portraitUp]); //no landscape mode
   runApp(MyApp());
 }
 
@@ -33,7 +30,8 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+//WidgetsBindingObserver for mixing
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   void _startAddNewTransaction(BuildContext ctx) {
     showModalBottomSheet(
         context: ctx,
@@ -57,6 +55,23 @@ class _MyHomePageState extends State<MyHomePage> {
     //   date: DateTime.now(),
     // )
   ];
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print('changed lifecycle state: ' + state.toString());
+    //inactive,pause,resumed,detached
+  }
+
+  @override
+  dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
 
   List<Transaction> get _recentTransactions {
     return _userTransactions.where((tx) {

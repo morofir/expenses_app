@@ -7,16 +7,46 @@ import 'package:intl/intl.dart';
 class NewTransaction extends StatefulWidget {
   final Function addTx;
 
-  NewTransaction(this.addTx);
+  NewTransaction(this.addTx) {
+    print('constructor new transaction');
+  }
 
   @override
-  State<NewTransaction> createState() => _NewTransactionState();
+  State<NewTransaction> createState() {
+    print('create state new transaction');
+    return _NewTransactionState();
+  }
 }
 
 class _NewTransactionState extends State<NewTransaction> {
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
   DateTime _selectedDate; //not final, changes
+
+  _NewTransactionState() {
+    print('constructor new transaction state!');
+  }
+
+  @override
+  void initState() {
+    //for http request mostly.
+    super.initState(); //inherit parent class
+    print('init state');
+  }
+
+  @override
+  void didUpdateWidget(covariant NewTransaction oldWidget) {
+    // TODO: implement didUpdateWidget
+    super.didUpdateWidget(oldWidget);
+    print('didUpdateWidget: Called whenever the widget configuration changes');
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    print('dispose');
+  }
 
   void _submitData() {
     final enteredtitle = _titleController.text;
@@ -91,9 +121,9 @@ class _NewTransactionState extends State<NewTransaction> {
                         ),
                         Container(
                           margin: EdgeInsets.all(10),
+                          alignment: Alignment.centerRight,
                           child: Platform.isIOS
                               ? CupertinoButton(
-                                  color: Colors.black,
                                   child: Text('Choose Date'),
                                   onPressed: _openDatePicker)
                               : ElevatedButton(
